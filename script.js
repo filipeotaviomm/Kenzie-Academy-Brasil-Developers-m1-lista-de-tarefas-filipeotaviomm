@@ -13,7 +13,31 @@ const tasks = [
   },
 ];
 
-function createCard(taskInfo) {
+//______________________________________________
+let buttonAddTask = document.querySelector("#btnSubmit");
+
+buttonAddTask.addEventListener("click", function (e) {
+  e.preventDefault();
+  let inputTask = document.querySelector("#input_title").value;
+  let selectPriority = document.querySelector("#input_priority").value;
+
+  let newObj = {};
+  newObj.titulo = inputTask;
+  newObj.tipo = selectPriority;
+
+  // *o de cima ou esse
+  // let newObj = {
+  //   titulo: inputTask,
+  //   tipo: selectPriority,
+  // };
+
+  tasks.push(newObj);
+
+  renderElements(tasks);
+});
+
+//_______________________________________________
+function createCard(taskInfo, index) {
   // Criando elementos necessários
   const li = document.createElement("li");
   const div = document.createElement("div");
@@ -22,6 +46,15 @@ function createCard(taskInfo) {
 
   // Adicionando o titulo da tarefa como texto do paragrafo
   p.innerText = taskInfo.titulo;
+
+  // Adicionando classes nos tipos em relação à urgência
+  if (taskInfo.tipo == "Urgente") {
+    span.classList.add("span-urgent");
+  } else if (taskInfo.tipo == "Prioritário") {
+    span.classList.add("span-priority");
+  } else if (taskInfo.tipo == "Normal") {
+    span.classList.add("span-normal");
+  }
 
   // Adicionando span e paragrafo a div
   div.appendChild(span);
@@ -33,7 +66,14 @@ function createCard(taskInfo) {
   // Adicionando icone ao botão
   button.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
 
-  /// Adicionando a div e o botão de deletar ao list item
+  //Criando um evento de remover ao clicar no botão
+  button.addEventListener("click", function (e) {
+    tasks.splice(index, 1);
+
+    renderElements(tasks);
+  });
+
+  // Adicionando a div e o botão de deletar ao list item
   li.appendChild(div);
   li.appendChild(button);
 
@@ -41,18 +81,15 @@ function createCard(taskInfo) {
 }
 
 function renderElements(taskList) {
-  const htmlList = document.querySelector(".tasks");
+  const htmlList = document.querySelector(".tasks"); //é a ul
   htmlList.innerHTML = "";
 
-  // Ajustar a lógica
-  let card = createCard(taskList[0]);
-  htmlList.appendChild(card);
+  for (let i = 0; i < taskList.length; i++) {
+    let individualTask = taskList[i];
 
-  card = createCard(taskList[1]);
-  htmlList.appendChild(card);
-
-  card = createCard(taskList[2]);
-  htmlList.appendChild(card);
+    let card = createCard(individualTask, i);
+    htmlList.appendChild(card);
+  }
 }
 
 renderElements(tasks);
